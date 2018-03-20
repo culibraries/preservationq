@@ -3,7 +3,7 @@ from celery import group
 import os
 from etdpreservation import runExtractRename
 from bag import createBag, updateBag, validateBag
-from scpPetaLibrary import scpPetaLibrary
+from petaLibrary import scpPetaLibrary
 
 ETDSRC = os.getenv('ETDSRC','/data/libetd-archive/')
 ETDTGT = os.getenv('ETDTGT','/data/libetd-preservation/')
