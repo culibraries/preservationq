@@ -1,3 +1,4 @@
+from celery.task import task
 from subprocess import call,check_output,STDOUT
 import os
 
