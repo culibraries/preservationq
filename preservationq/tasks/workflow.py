@@ -1,9 +1,9 @@
 from celery.task import task
 from celery import group
 import request,os
-from ./etdpreservation import runExtractRename
-from ./bag import createBag, updateBag, validateBag
-from ./scpPetaLibrary import scpPetaLibrary
+from etdpreservation import runExtractRename
+from bag import createBag, updateBag, validateBag
+from scpPetaLibrary import scpPetaLibrary
 
 ETDSRC = os.getenv('ETDSRC','/data/libetd-archive/')
 ETDTGT = os.getenv('ETDTGT','/data/libetd-preservation/')
