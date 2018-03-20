@@ -1,7 +1,7 @@
 from celery.task import task
 from celery import group
 import request,os
-from ./etd-preservation import runExtractRename
+from ./etdpreservation import runExtractRename
 from ./bag import createBag, updateBag, validateBag
 from ./scpPetaLibrary import scpPetaLibrary
 
