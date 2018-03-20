@@ -1,6 +1,5 @@
-#from dockertask import docker_task
 from subprocess import call,check_output,STDOUT
-import request, bagit,os
+import os
 
 petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
 petaLibraryArchivePath=os.getenv('petaLibraryArchivePath','/archive/libdigicoll')

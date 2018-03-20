@@ -1,11 +1,5 @@
 from celery.task import task
 import bagit
-#from dockertask import docker_task
-from subprocess import call,STDOUT
-import request, bagit
-
-#Default base directory
-#basedir="/data/static/"
 
 @task()
 def createBag(path,metadata):
