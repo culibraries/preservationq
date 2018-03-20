@@ -2,7 +2,6 @@
 from subprocess import call,check_output,STDOUT
 import request, bagit,os
 
-scp -i .ssh/id_rsa_dt file.test dtn.rc.colorado.edu:/archive/libdigicoll/
 petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
 petaLibraryArchivePath=os.getenv('petaLibraryArchivePath','/archive/libdigicoll')
 
