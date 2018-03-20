@@ -1,6 +1,6 @@
 from celery.task import task
 from celery import group
-import request,os
+import os
 from etdpreservation import runExtractRename
 from bag import createBag, updateBag, validateBag
 from scpPetaLibrary import scpPetaLibrary
