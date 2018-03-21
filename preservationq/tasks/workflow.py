@@ -22,7 +22,7 @@ def archiveBag(bags,queue):
         grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
         print(source,destination)
         res = group(grouptasks)()
-        return "Successfully submitted subtasks to scpPetaLibrary"
+        return "Successfully submitted {0} scpPetaLibrary subtask(s)".format(len(grouptasks))
 
 @task()
 def preserveETDWorkflow(zipname):
