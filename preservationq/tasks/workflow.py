@@ -27,4 +27,4 @@ def archiveBag(bags):
 def preserveETDWorkflow(zipname):
     bagmetadata={"Source-organization": "University of Colorado Boulder"}
     res = (runExtractRename.s(zipname) | createBag.s(bagmetadata) | archiveBag.s())()
-    return "Successfully submitted {0} for preservation workflow. Please see childern for workflow progress."
+    return self.request.delivery_info #"Successfully submitted {0} for preservation workflow. Please see childern for workflow progress."
