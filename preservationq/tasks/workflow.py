@@ -25,6 +25,7 @@ def archiveBag(bags):
 
 @task()
 def preserveETDWorkflow(zipname):
+    queuename = preserveETDWorkflow.request.delivery_info['routing_key']
     bagmetadata={"Source-organization": "University of Colorado Boulder"}
-    res = (runExtractRename.s(zipname) | createBag.s(bagmetadata) | archiveBag.s())()
-    return preserveETDWorkflow.request.delivery_info #"Successfully submitted {0} for preservation workflow. Please see childern for workflow progress."
+    res = (runExtractRename.s(zipname).set(queue=queuename) | createBag.s(bagmetadata).set(queue=queuename) | archiveBag.s().set(queue=queuename))()
+    return "Successfully submitted {0} for preservation workflow. Please see childern for workflow progress."
