@@ -1,6 +1,5 @@
 from celery.task import task
-from celery import signature
-from celery import group
+from celery import signature, group
 import os
 from etdpreservation import runExtractRename
 from bag import createBag, updateBag, validateBag
@@ -20,7 +19,7 @@ def archiveBag(bags):
     for bag in bags:
         source=bag.__str__()
         destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
-        grouptasks.append(scpPetaLibrary.s(source,destination))
+        grouptasks.append(scpPetaLibrary.si(source,destination))
         res = group(grouptasks)()
         return res.join()
 
