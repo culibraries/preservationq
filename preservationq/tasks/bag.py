@@ -10,14 +10,16 @@ def createBag(path,metadata):
     path - path to folder to bagit
     metadata - Dict object
 
-    returns a created bag or a list of created bags
+    returns the path of the new created bag or a list of paths
     """
     if isinstance(path,str):
-        return bagit.make_bag(path,metadata)
+        bagit.make_bag(path,metadata)
+        return path
     elif isinstance(path,list):
         result_bags=[]
         for itm in path:
-            result_bags.append(bagit.make_bag(itm,metadata))
+            bagit.make_bag(itm,metadata)
+            result_bags.append(itm)
         return result_bags
     else:
         raise Exception("Argument Error: path must be a string or list of strings")
