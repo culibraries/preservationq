@@ -79,6 +79,7 @@ def runExtractRename(pattern):
     """
     Begin processing all the zip files in the source directory
     """
+    print(pattern)
     created_dirs=[]
     files = glob.glob(os.path.join(ETDSRC,pattern))
     for f in files:
