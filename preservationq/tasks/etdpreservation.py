@@ -12,7 +12,8 @@
 # Revision History
 # ----------------
 # 1.0 2018-03-15 FS Initial release
-
+from celery.task import task
+from celery import signature
 import glob
 import os
 import zipfile
@@ -73,6 +74,7 @@ def log(file):
     logfile.write('{0} | {1}\n'.format(dt, file))
     logfile.close()
 
+@task()
 def runExtractRename(pattern):
     """
     Begin processing all the zip files in the source directory
