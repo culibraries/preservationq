@@ -41,4 +41,4 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
             meta = str(inst)
         )
         raise Ignore
-    return "Successful copy to PetaLibrary Location: {0}".format(os.path.join(petaLibraryArchivePath,destination))
+    return "PetaLibrary Location: {0}".format(os.path.join(petaLibraryArchivePath,destination))

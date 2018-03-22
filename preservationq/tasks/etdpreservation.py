@@ -95,11 +95,12 @@ def runExtractRename(pattern):
         author = getAuthor(xml)
         ID = getID(xml)
         newpath = sdate + '_' + author.replace(' ', '') + '_' + ID
-        os.mkdir(ETDTGT + newpath)
         created_dirs.append(ETDTGT + newpath)
-        # Move ETD files from temp to target directory
+        
         for etd in os.listdir(td):
             try:
+                os.mkdir(ETDTGT + newpath)
+                # Move ETD files from temp to target directory
                 shutil.move(td + etd, ETDTGT + newpath)
                 # Log the transacton
                 log(os.path.basename(f))
