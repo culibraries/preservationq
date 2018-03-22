@@ -19,8 +19,6 @@ def createBag(path,metadata):
 
     returns the path of the new created bag or a list of paths
     """
-    try:
-        bagit.Bag()
     if isinstance(path,str):
         if checkIfBag(path):
             return path
