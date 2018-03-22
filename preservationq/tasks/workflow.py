@@ -3,32 +3,22 @@ from celery import signature, group
 import os
 from etdpreservation import runExtractRename
 from bag import createBag, updateBag, validateBag
-from petaLibrary import scpPetaLibrary
+from petaLibrary import archiveBag
 
-ETDSRC = os.getenv('ETDSRC','/data/libetd-archive/')
-ETDTGT = os.getenv('ETDTGT','/data/libetd-preservation/')
-petaLibrarySubDirectory = os.getenv('petaLibrarySubDirectory','digitalobjects/etds')
 
 @task()
-def archiveBag(bags,queue):
+def preserveETDWorkflow(pattern):
     """
-    List of bags to move to PetaLibrary
-    args: bags - list of bag object
-    """
-    grouptasks=[]
-    for bag in bags:
-        source=bag
-        destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
-        grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
-        print(source,destination)
-        res = group(grouptasks)()
-        return "Successfully submitted {0} scpPetaLibrary subtask(s)".format(len(grouptasks))
+    ETD preservation workflow.
+    args:
+    pattern - Glob pattern or full zip filename
 
-@task()
-def preserveETDWorkflow(zipname):
+    Result:
+    Unzips, Moves and renames folder, Creates Bag, and Secure copy to PetaLibrary
+    """
     queuename = preserveETDWorkflow.request.delivery_info['routing_key']
     bagmetadata={"Source-organization": "University of Colorado Boulder"}
-    res = (runExtractRename.s(zipname).set(queue=queuename) |
+    res = (runExtractRename.s(pattern).set(queue=queuename) |
         createBag.s(bagmetadata).set(queue=queuename) |
         archiveBag.s(queuename).set(queue=queuename))()
     return "Successfully submitted {0} for preservation workflow. Please see childern for workflow progress."

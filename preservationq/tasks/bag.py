@@ -2,6 +2,13 @@
 from celery.task import task
 import bagit
 
+def checkIfBag(path):
+    try:
+        bagit.Bag(path)
+        return True
+    except:
+        return False
+
 @task()
 def createBag(path,metadata):
     """
@@ -12,13 +19,19 @@ def createBag(path,metadata):
 
     returns the path of the new created bag or a list of paths
     """
+    try:
+        bagit.Bag()
     if isinstance(path,str):
-        bagit.make_bag(path,metadata)
-        return path
+        if checkIfBag(path):
+            return path
+        else:
+            bagit.make_bag(path,metadata)
+            return path
     elif isinstance(path,list):
         result_bags=[]
         for itm in path:
-            bagit.make_bag(itm,metadata)
+            if not checkIfBag(path):
+                bagit.make_bag(itm,metadata)
             result_bags.append(itm)
         return result_bags
     else:

@@ -99,9 +99,12 @@ def runExtractRename(pattern):
         created_dirs.append(ETDTGT + newpath)
         # Move ETD files from temp to target directory
         for etd in os.listdir(td):
-            shutil.move(td + etd, ETDTGT + newpath)
-        # Log the transacton
-        log(os.path.basename(f))
+            try:
+                shutil.move(td + etd, ETDTGT + newpath)
+                # Log the transacton
+                log(os.path.basename(f))
+            except Exception as inst:
+                log("{0}: {1}\n".format(os.path.basename(f),inst))
         # Cleanup the temp directory
         shutil.rmtree(td)
     return created_dirs
