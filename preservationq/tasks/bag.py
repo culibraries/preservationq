@@ -28,7 +28,7 @@ def createBag(path,metadata):
     elif isinstance(path,list):
         result_bags=[]
         for itm in path:
-            if not checkIfBag(path):
+            if not checkIfBag(itm):
                 bagit.make_bag(itm,metadata)
             result_bags.append(itm)
         return result_bags

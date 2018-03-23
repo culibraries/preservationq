@@ -47,4 +47,5 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
             meta = str(inst)
         )
         raise Ignore
-    return "PetaLibrary Location: {0}".format(os.path.join(petaLibraryArchivePath,destination))
+    return {"bag":"{0}".format(destination.split('/')[-1]) ,
+            "petaLibrary": "{0}".format(os.path.join(petaLibraryArchivePath,destination))}
