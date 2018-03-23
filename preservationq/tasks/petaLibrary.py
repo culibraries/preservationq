@@ -20,9 +20,9 @@ def archiveBag(bags,queue):
         source=bag
         destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
         grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
-        print(source,destination)
-        res = group(grouptasks)()
-        return "Successfully submitted {0} scpPetaLibrary subtask(s)".format(len(grouptasks))
+        #print(source,destination)
+    res = group(grouptasks)()
+    return "Successfully submitted {0} scpPetaLibrary subtask(s)".format(len(grouptasks))
 
 
 @task(bind=True)
