@@ -23,8 +23,8 @@ def archiveBag(bags,queue):
     for bag in bags:
         vBag=validateBag(bag,fast=True)
         if vBag['valid']:
-            valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             source=bag
+            valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
             grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
         else:
