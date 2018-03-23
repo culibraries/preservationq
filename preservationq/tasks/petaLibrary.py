@@ -3,6 +3,7 @@ from celery import signature, group, states
 from celery.exceptions import Ignore
 from subprocess import call,check_output,STDOUT,check_call
 from bag import validateBag
+from datetime import datetime
 import os
 
 petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
@@ -18,9 +19,11 @@ def archiveBag(bags,queue):
     """
     grouptasks=[]
     notValid=[]
+    valid=[]
     for bag in bags:
         vBag=validateBag(bag,fast=True)
         if vBag['valid']:
+            valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             source=bag
             destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
             grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
@@ -28,7 +31,7 @@ def archiveBag(bags,queue):
             notValid.append(bag)
         #print(source,destination)
     res = group(grouptasks)()
-    return "Successfully submitted {0} PetaLibrary subtask(s). Not Valid:{1}".format(len(grouptasks),notValid)
+    return {"subtasks":len(grouptasks),"valid":valid,"notvalid":notValid}
 
 
 @task(bind=True)
