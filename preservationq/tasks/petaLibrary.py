@@ -2,6 +2,7 @@ from celery.task import task
 from celery import signature, group, states
 from celery.exceptions import Ignore
 from subprocess import call,check_output,STDOUT,check_call
+from bag import validateBag
 import os
 
 petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
@@ -16,13 +17,18 @@ def archiveBag(bags,queue):
     args: bags - list of paths to bag object
     """
     grouptasks=[]
+    notValid=[]
     for bag in bags:
-        source=bag
-        destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
-        grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
+        vBag=validateBag(bag,fast=True)
+        if vBag['valid']:
+            source=bag
+            destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
+            grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
+        else:
+            notValid.append(bag)
         #print(source,destination)
     res = group(grouptasks)()
-    return "Successfully submitted {0} scpPetaLibrary subtask(s)".format(len(grouptasks))
+    return "Successfully submitted {0} PetaLibrary subtask(s). Not Valid:{1}".format(len(grouptasks),notValid)
 
 
 @task(bind=True)

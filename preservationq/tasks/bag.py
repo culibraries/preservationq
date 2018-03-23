@@ -51,7 +51,7 @@ def updateBag(path,metadata,manifests=False):
         bag.info[key]= value
     bag.save(manifests=manifests)
 
-@task()
+
 def validateBag(path,fast=False):
     """
     Task validates bag
