@@ -116,7 +116,7 @@ def runExtractRename(pattern):
         # Create a temp directory to work in
         #td = tempfile.mkdtemp() + '\\' # Windows only
         td = tempfile.mkdtemp() + '/'
-        xml = extractZip(f,td)
+        xml = extractZipCheckXML(f,td)
         # Check xml and a pdf file exists
         if xml and len(glob.glob(td + '*.pdf'))>0:
             newpath = createRenameFolder(xml,td)
