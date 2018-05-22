@@ -74,37 +74,63 @@ def log(file):
     logfile.write('{0} | {1}\n'.format(dt, file))
     logfile.close()
 
+def extractZipCheckXML(f,td):
+    """
+    Unzip the ETD package to the temp directory
+    """
+    try:
+        z = zipfile.ZipFile(f)
+        z.extractall(td)
+        xml = glob.glob(td + '*.xml')[0]
+        return xml
+    except:
+        return False
+def createRenameFolder(xml,td):
+    """
+    Create the target directory -- format is submission date, author, and ID
+    """
+    xml = glob.glob(td + '*.xml')[0]
+    sdate = getSubmissionDate(xml)
+    author = getAuthor(xml)
+    ID = getID(xml)
+    return sdate + '_' + author.replace(' ', '') + '_' + ID
+
+def checkExists(path):
+    """
+    check if path exists and if it does not => create path
+    """
+    if not os.path.exists(path):
+        os.mkdir(path)
+
 @task()
 def runExtractRename(pattern):
     """
     Begin processing all the zip files in the source directory
     """
-    print(pattern)
+    #check if directories present
+    checkExists(os.path.join(ETDTGT,'processed'))
+    checkExists(os.path.join(ETDTGT,'trouble'))
     created_dirs=[]
     files = glob.glob(os.path.join(ETDSRC,pattern))
     for f in files:
         # Create a temp directory to work in
         #td = tempfile.mkdtemp() + '\\' # Windows only
         td = tempfile.mkdtemp() + '/'
-        # Unzip the ETD package to the temp directory
-        z = zipfile.ZipFile(f)
-        z.extractall(td)
-        # Create the target directory -- format is submission date, author, and ID
-        xml = glob.glob(td + '*.xml')[0]
-        sdate = getSubmissionDate(xml)
-        author = getAuthor(xml)
-        ID = getID(xml)
-        newpath = sdate + '_' + author.replace(' ', '') + '_' + ID
-        created_dirs.append(ETDTGT + newpath)
-        if not os.path.exists(os.path.join(ETDTGT,newpath)):
-            os.mkdir(os.path.join(ETDTGT,newpath))
-
-        for etd in os.listdir(td):
-            # Move ETD files from temp to target directory
-            shutil.move(td + etd, ETDTGT + newpath)
-            # Log the transacton
-            log(os.path.basename(f))
-        # Cleanup the temp directory
+        xml = extractZip(f,td)
+        # Check xml and a pdf file exists
+        if xml and len(glob.glob(td + '*.pdf'))>0:
+            newpath = createRenameFolder(xml,td)
+            if not os.path.exists(os.path.join(ETDTGT,newpath)):
+                os.mkdir(os.path.join(ETDTGT,newpath))
+            created_dirs.append(ETDTGT + newpath)
+            for etd in os.listdir(td):
+                # Move ETD files from temp to target directory
+                shutil.move(td + etd, ETDTGT + newpath)
+                # Log the transacton
+                log(os.path.basename(f))
+            shutil.move(f, os.path.join(ETDTGT,'processed'))
+        else:
+            shutil.move(f, os.path.join(ETDTGT,'trouble'))
         shutil.rmtree(td)
     return created_dirs
 

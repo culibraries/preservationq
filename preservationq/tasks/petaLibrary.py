@@ -6,9 +6,11 @@ from bag import validateBag
 from datetime import datetime
 import os
 
+#Required
+petaLibraryUser = os.getenv('petaLibraryUser',None)
+#Optional
 petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
 petaLibraryArchivePath=os.getenv('petaLibraryArchivePath','/archive/libdigicoll')
-petaLibraryUser = os.getenv('petaLibraryUser','pleaseSetUser')
 petaLibrarySubDirectory = os.getenv('petaLibrarySubDirectory','digitalobjects/etds')
 
 @task()
@@ -36,11 +38,13 @@ def archiveBag(bags,queue):
 
 @task(bind=True)
 def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
-    if destination.strip()[0]=='/':
-        raise ValueError('Argument: destination must be relative path within Library Archive Location')
-    scp_dest = "{0}@{1}:{2}".format(user,petaLibraryNode,os.path.join(petaLibraryArchivePath,destination))
-    print(scp_dest)
     try:
+        if destination.strip()[0]=='/':
+            raise ValueError('Argument: destination must be relative path within Library Archive Location')
+        if not user:
+            raise Exception('Environmental Variable: petaLibraryUser is required')
+
+        scp_dest = "{0}@{1}:{2}".format(user,petaLibraryNode,os.path.join(petaLibraryArchivePath,destination))
         check_call(["scp","-o","StrictHostKeyChecking=no","-o",
                     "UserKnownHostsFile=/dev/null", "-i","id_rsa_dt",
                     "-r",source,scp_dest])
