@@ -21,4 +21,4 @@ def preserveETDWorkflow(pattern):
     res = (runExtractRename.s(pattern).set(queue=queuename) |
         createBag.s(bagmetadata).set(queue=queuename) |
         archiveBag.s(queuename).set(queue=queuename))()
-    return "Successfully submitted pattern({0}) for matching ETD zipfiles for preservation workflow.".format(pattern)
+    return "Succefully submitted pattern({0}) for matching ETD zipfiles for preservation workflow.".format(pattern)
