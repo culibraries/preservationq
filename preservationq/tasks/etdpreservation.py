@@ -149,23 +149,22 @@ def runExtractRename(pattern):
         # Check xml and a pdf file exists
         if xml and len(glob.glob(td + '*.pdf'))>0:
             newpath = createRenameFolder(xml,td)
-            if os.path.exists(os.path.join(ETDTGT,newpath)):
-                shutil.rmtree(os.path.join(ETDTGT,newpath))
-            os.mkdir(os.path.join(ETDTGT,newpath))
+            if not os.path.exists(os.path.join(ETDTGT,newpath)):
+                os.mkdir(os.path.join(ETDTGT,newpath))
             created_dirs.append(os.path.join(ETDTGT,newpath))
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
                 shutil.move(td + etd, ETDTGT + newpath + etd)
             # Log the transacton
             log(os.path.basename(f))
-            shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
+
             bag=newpath
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
             metadata=createMetadata(bag,zipfile,processLocation,task_id)
-            metadata['xml-metadata']=convertXML2JSON(os.path.join(ETDTGT,'processed',xml.split('/')[-1]))
+            metadata['xml-metadata']=convertXML2JSON(os.path.join(ETDTGT,newpath,xml.split('/')[-1]))
             updateMetadata(bag,metadata)
-            #catalogMetadata(bag,zipfile,processLocation,task_id)
+            shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
         shutil.rmtree(td)
