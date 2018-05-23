@@ -66,6 +66,6 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
         raise Ignore
 
     metadata = {"bag":"{0}".format(destination.split('/')[-1]) ,
-            "petaLibrary": "{0}".format(os.path.join(petaLibraryArchivePath,destination))}
+                'locations':{'petalibrary':{'path':"{0}".format(os.path.join(petaLibraryArchivePath,destination))}}}
     updateMetadata(metadata["bag"],metadata)
     return metadata

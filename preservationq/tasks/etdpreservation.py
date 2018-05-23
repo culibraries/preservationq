@@ -105,11 +105,11 @@ def checkExists(path):
 
 def createMetadata(bag,zipfile,processLocation,task_id):
     return {'bag':bag,
-            'host':{
+            'locations':{'local':{
                 'hostname':os.uname()[1],
                 'zipfile':zipfile,
                 'processLocation':processLocation
-             },
+             },'petalibrary':{}},
              'workflow':{'runExtractRename':{'taskid':task_id,
              'result':"{0}/queue/task/{1}/".format(base_url,task_id)}},
              'validation':[]
