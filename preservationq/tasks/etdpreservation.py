@@ -162,7 +162,7 @@ def runExtractRename(pattern):
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
             metadata=createMetadata(bag,zipfile,processLocation,task_id)
-            metadata['xml-metadata']=convertXML2JSON(xml)
+            metadata['xml-metadata']=convertXML2JSON(os.path.join(ETDTGT,'processed',xml.split('/')[-1]))
             updateMetadata(bag,metadata)
             #catalogMetadata(bag,zipfile,processLocation,task_id)
         else:
