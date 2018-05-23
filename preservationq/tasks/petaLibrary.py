@@ -5,7 +5,7 @@ from subprocess import call,check_output,STDOUT,check_call
 from bag import validateBag
 from datetime import datetime
 import os
-from ./digitalcatalog import updateMetadata, digitalcatalog , queryRecords
+from digitalcatalog import updateMetadata, digitalcatalog , queryRecords
 #Required
 petaLibraryUser = os.getenv('petaLibraryUser',None)
 #Optional
