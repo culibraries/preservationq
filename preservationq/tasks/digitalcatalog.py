@@ -10,7 +10,6 @@ api_url_tmpl ="{0}/data_store/data/{1}/{2}/.json"
 def updateMetadata(bag,metadata):
     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
     catalogData=queryRecords(query)
-    print(catalogData)
     if catalogData['count']>0:
         cdata=catalogData['results'][0]
         cdata.update(metadata)

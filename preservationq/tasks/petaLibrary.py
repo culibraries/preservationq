@@ -35,14 +35,13 @@ def archiveBag(bags,queue):
         vBag=validateBag(bag,fast=True)
         if vBag['valid']:
             source=bag
-            updateBagValidatationMetadata(bag,{"valid":True,"timestamp":datetime.now().isoformat()})
+            updateBagValidatationMetadata(bag.split('/')[-1],{"valid":True,"timestamp":datetime.now().isoformat()})
             valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
             grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
         else:
             updateBagValidatationMetadata(bag,{"valid":False,"timestamp":datetime.now().isoformat()})
             notValid.append(bag)
-        #print(source,destination)
     res = group(grouptasks)()
     return {"subtasks":len(grouptasks),"valid":valid,"notvalid":notValid}
 
