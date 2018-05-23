@@ -17,6 +17,7 @@ def updateMetadata(bag,metadata):
     else:
         metadata['bag']=bag
         digitalcatalog(metadata)
+
 def queryRecords(query,collection='digital_objects',database='catalog'):
     api_url="{0}?query={1}".format(api_url_tmpl.format(base_url,database,collection),query)
     headers={'Content-Type':'application/json','Authorization':'Token {0}'.format(api_token)}
