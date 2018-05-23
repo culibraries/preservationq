@@ -22,7 +22,7 @@ import tempfile
 import shutil
 import datetime
 import string
-
+from ./digitalcatalog import updateMetadata
 # Constants for Windows dev only
 #ETDSRC = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\source\\'
 #ETDTGT = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\target\\'
@@ -32,6 +32,7 @@ import string
 ETDSRC = os.getenv('ETDSRC','/data/libetd-archive/')
 ETDTGT = os.getenv('ETDTGT','/data/libetd-preservation/')
 LOGFILE = os.getenv('ETDLOG','/data/libetd-preservation/process-log.txt')
+base_url =os.getenv('APIBASE',"https://geo.colorado.edu/api")
 
 def getRootForXML(xml):
     """
@@ -102,11 +103,35 @@ def checkExists(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
+def createMetadata(bag,zipfile,processLocation,task_id):
+    return {'bag':bag,
+            'host':{
+                'hostname':os.uname()[1],
+                'zipfile':zipfile,
+                'processLocation':processLocation
+             },
+             'workflow':{'runExtractRename':{'taskid':task_id,
+             'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
+             'valid':[]
+            }
+
+# def catalogMetadata(bag,zipfile,processLocation,task_id):
+#     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
+#     catalogData=queryRecords(query)
+#     if catalogData['count']>0:
+#         cdata=catalogData['results'][0]
+#         cdata.update(createMetadata(bag,zipfile,processLocation,task_id))
+#         digitalcatalog(cdata)
+#     else:
+#         digitalcatalog(createMetadata(bag,zipfile,processLocation,task_id))
+
+
 @task()
 def runExtractRename(pattern):
     """
     Begin processing all the zip files in the source directory
     """
+    task_id = str(runExtractRename.request.id)
     #check if directories present
     checkExists(os.path.join(ETDTGT,'processed'))
     checkExists(os.path.join(ETDTGT,'trouble'))
@@ -122,13 +147,19 @@ def runExtractRename(pattern):
             newpath = createRenameFolder(xml,td)
             if not os.path.exists(os.path.join(ETDTGT,newpath)):
                 os.mkdir(os.path.join(ETDTGT,newpath))
-            created_dirs.append(ETDTGT + newpath)
+            created_dirs.append(os.path.join(ETDTGT,newpath))
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
                 shutil.move(td + etd, ETDTGT + newpath)
                 # Log the transacton
                 log(os.path.basename(f))
             shutil.move(f, os.path.join(ETDTGT,'processed'))
+            bag=newpath
+            processLocation=os.path.join(ETDTGT,newpath)
+            zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
+            metadata=createMetadata(bag,zipfile,processLocation,task_id)
+            updateMetadata(bag,metadata)
+            #catalogMetadata(bag,zipfile,processLocation,task_id)
         else:
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
         shutil.rmtree(td)

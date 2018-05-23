@@ -5,7 +5,7 @@ from subprocess import call,check_output,STDOUT,check_call
 from bag import validateBag
 from datetime import datetime
 import os
-
+from ./digitalcatalog import updateMetadata, digitalcatalog , queryRecords
 #Required
 petaLibraryUser = os.getenv('petaLibraryUser',None)
 #Optional
@@ -13,6 +13,15 @@ petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
 petaLibraryArchivePath=os.getenv('petaLibraryArchivePath','/archive/libdigicoll')
 petaLibrarySubDirectory = os.getenv('petaLibrarySubDirectory','digitalobjects/etds')
 
+def updateBagValidatationMetadata(bag,validationMetadata):
+    query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
+    catalogData=queryRecords(query)
+    if catalogData['count']>0:
+        cdata=catalogData['results'][0]
+        cdata['validation'].append(validationMetadata)
+        digitalcatalog(cdata)
+    else:
+        digitalcatalog({'bag':bag,'validation':[validationMetadata]})
 @task()
 def archiveBag(bags,queue):
     """
@@ -26,10 +35,12 @@ def archiveBag(bags,queue):
         vBag=validateBag(bag,fast=True)
         if vBag['valid']:
             source=bag
+            updateBagValidatationMetadata(bag,{"valid":True,"timestamp":datetime.now()})
             valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
             grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
         else:
+            updateBagValidatationMetadata(bag,{"valid":False,"timestamp":datetime.now()})
             notValid.append(bag)
         #print(source,destination)
     res = group(grouptasks)()
@@ -54,5 +65,8 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
             meta = str(inst)
         )
         raise Ignore
-    return {"bag":"{0}".format(destination.split('/')[-1]) ,
+
+    metadata = {"bag":"{0}".format(destination.split('/')[-1]) ,
             "petaLibrary": "{0}".format(os.path.join(petaLibraryArchivePath,destination))}
+    updateMetadata(metadata["bag"],metadata)
+    return metadata
