@@ -9,6 +9,7 @@ setup(name='preservationq',
           'pymongo==3.2.1',
           'requests==2.9.1',
           'paramiko==1.16.0',
+          'xmltodict==0.11.0',
           'bagit',
       ],
 )

@@ -15,7 +15,7 @@
 from celery.task import task
 from celery import signature
 import glob
-import os
+import os, json, xmltodict
 import zipfile
 import xml.etree.ElementTree as ET
 import tempfile
@@ -114,6 +114,10 @@ def createMetadata(bag,zipfile,processLocation,task_id):
              'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
              'valid':[]
             }
+def convertXML2JSON(xml):
+    xmldict=xmltodict.parse(open(xml,'r').read())
+    return json.loads(json.dumps(xmldict))
+
 
 # def catalogMetadata(bag,zipfile,processLocation,task_id):
 #     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
@@ -158,6 +162,7 @@ def runExtractRename(pattern):
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
             metadata=createMetadata(bag,zipfile,processLocation,task_id)
+            metadata['xml-metadata']=convertXML2JSON(xml)
             updateMetadata(bag,metadata)
             #catalogMetadata(bag,zipfile,processLocation,task_id)
         else:
