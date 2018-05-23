@@ -112,11 +112,11 @@ def createMetadata(bag,zipfile,processLocation,task_id):
              },
              'workflow':{'runExtractRename':{'taskid':task_id,
              'result':"{0}/queue/task/{1}/".format(base_url,task_id)}},
-             'valid':[]
+             'validation':[]
             }
 def convertXML2JSON(xml):
     xmldict=xmltodict.parse(open(xml,'r').read())
-    return json.loads(json.dumps(xmldict))
+    return json.loads(json.dumps(xmldict).replace('@',''))
 
 
 # def catalogMetadata(bag,zipfile,processLocation,task_id):
@@ -157,7 +157,6 @@ def runExtractRename(pattern):
                 shutil.move(td + etd, os.path.join(ETDTGT, newpath, etd))
             # Log the transacton
             log(os.path.basename(f))
-
             bag=newpath
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
