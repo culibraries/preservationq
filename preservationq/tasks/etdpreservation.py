@@ -111,7 +111,7 @@ def createMetadata(bag,zipfile,processLocation,task_id):
                 'processLocation':processLocation
              },
              'workflow':{'runExtractRename':{'taskid':task_id,
-             'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
+             'result':"{0}/queue/task/{1}/".format(base_url,task_id)}},
              'valid':[]
             }
 def convertXML2JSON(xml):
