@@ -154,10 +154,10 @@ def runExtractRename(pattern):
             created_dirs.append(os.path.join(ETDTGT,newpath))
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
-                shutil.move(td + etd, ETDTGT + newpath)
-                # Log the transacton
-                log(os.path.basename(f))
-            shutil.move(f, os.path.join(ETDTGT,'processed'))
+                shutil.move(td + etd, ETDTGT + newpath + etd)
+            # Log the transacton
+            log(os.path.basename(f))
+            shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
             bag=newpath
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
