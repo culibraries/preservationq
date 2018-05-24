@@ -108,11 +108,11 @@ def createMetadata(bag,zipfile,processLocation,task_id):
             'locations':{'local':{
                 'hostname':os.uname()[1],
                 'zipfile':zipfile,
-                'processLocation':processLocation
+                'processLocation':processLocation,
+                'validation':[]
              },'petalibrary':{}},
-             'workflow':{'runExtractRename':{'taskid':task_id,
-             'result':"{0}/queue/task/{1}/".format(base_url,task_id)}},
-             'validation':[]
+             'workflow':{'initialtask':{'taskid':task_id,
+             'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
             }
 def convertXML2JSON(xml):
     xmldict=xmltodict.parse(open(xml,'r').read())
@@ -155,6 +155,8 @@ def runExtractRename(pattern):
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
                 shutil.move(td + etd, os.path.join(ETDTGT, newpath, etd))
+            #copy zipfile into bag to preserve provenance
+            shutil.copy(f,os.path.join(ETDTGT,newpath))
             # Log the transacton
             log(os.path.basename(f))
             bag=newpath

@@ -13,24 +13,22 @@ petaLibraryNode=os.getenv('petaLibraryNode','dtn.rc.colorado.edu')
 petaLibraryArchivePath=os.getenv('petaLibraryArchivePath','/archive/libdigicoll')
 petaLibrarySubDirectory = os.getenv('petaLibrarySubDirectory','digitalobjects/etds')
 
-def updateBagValidatationMetadata(bag,validationMetadata):
+def updateBagValidatationMetadata(bag,location,validationMetadata):
     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
     catalogData=queryRecords(query)
     if catalogData['count']>0:
         cdata=catalogData['results'][0]
-        cdata['validation'].append(validationMetadata)
+        cdata['locations'][location]['validation'].append(validationMetadata)
         digitalcatalog(cdata)
     else:
-        digitalcatalog({'bag':bag,'validation':[validationMetadata]})
+        digitalcatalog({'bag':bag,'locations':{'validation':[validationMetadata]})
 
 def updateBagLocationMetadata(bag,locationMetadata):
     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
     catalogData=queryRecords(query)
     if catalogData['count']>0:
         cdata=catalogData['results'][0]
-        print(cdata)
         cdata['locations']['petalibrary']=locationMetadata
-        print(cdata)
         digitalcatalog(cdata)
     else:
         digitalcatalog({'bag':bag,'locations':{'petalibrary':locationMetadata}})
@@ -48,12 +46,12 @@ def archiveBag(bags,queue):
         vBag=validateBag(bag,fast=True)
         if vBag['valid']:
             source=bag
-            updateBagValidatationMetadata(bag.split('/')[-1],{"valid":True,"timestamp":datetime.now().isoformat()})
+            updateBagValidatationMetadata(bag.split('/')[-1],'local',{"valid":True,"timestamp":datetime.now().isoformat()})
             valid.append({"bag":source.split('/')[-1],"valid":datetime.now()})
             destination= os.path.join(petaLibrarySubDirectory,source.split('/')[-1])
             grouptasks.append(scpPetaLibrary.si(source,destination).set(queue=queue))
         else:
-            updateBagValidatationMetadata(bag,{"valid":False,"timestamp":datetime.now().isoformat()})
+            updateBagValidatationMetadata(bag,'local',{"valid":False,"timestamp":datetime.now().isoformat()})
             notValid.append(bag)
     res = group(grouptasks)()
     return {"subtasks":len(grouptasks),"valid":valid,"notvalid":notValid}
@@ -78,6 +76,7 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
         raise Ignore
 
     metadata = {"bag":"{0}".format(destination.split('/')[-1]) ,
-                'locations':{'petalibrary':{'path':"{0}".format(os.path.join(petaLibraryArchivePath,destination))}}}
+                'locations':{'petalibrary':{'path':"{0}".format(os.path.join(petaLibraryArchivePath,destination)),
+                'validation':[{"valid":True,"timestamp":datetime.now().isoformat()}]}}}
     updateBagLocationMetadata(metadata["bag"],metadata['locations']['petalibrary'])
     return metadata
