@@ -139,6 +139,7 @@ def runExtractRename(pattern):
     #check if directories present
     checkExists(os.path.join(ETDTGT,'processed'))
     checkExists(os.path.join(ETDTGT,'trouble'))
+    checkExists(os.path.join(ETDTGT,'bags'))
     created_dirs=[]
     files = glob.glob(os.path.join(ETDSRC,pattern))
     for f in files:
@@ -149,22 +150,23 @@ def runExtractRename(pattern):
         # Check xml and a pdf file exists
         if xml and len(glob.glob(td + '*.pdf'))>0:
             newpath = createRenameFolder(xml,td)
-            if os.path.exists(os.path.join(ETDTGT,newpath)):
-                shutil.rmtree(os.path.join(ETDTGT,newpath))
-            os.mkdir(os.path.join(ETDTGT,newpath))
-            created_dirs.append(os.path.join(ETDTGT,newpath))
+            destination = os.path.join(ETDTGT,'bags',newpath)
+            if os.path.exists(destination):
+                shutil.rmtree(destination)
+            os.mkdir(destination)
+            created_dirs.append(destination)
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
-                shutil.move(td + etd, os.path.join(ETDTGT, newpath, etd))
+                shutil.move(td + etd, os.path.join(destination, etd))
             #copy zipfile into bag to preserve provenance
-            shutil.copy(f,os.path.join(ETDTGT,newpath))
+            shutil.copy(f,destination)
             # Log the transacton
             log(os.path.basename(f))
             bag=newpath
-            processLocation=os.path.join(ETDTGT,newpath)
+            processLocation=destination
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
             metadata=createMetadata(bag,zipfile,processLocation,task_id)
-            metadata['metadata']=convertXML2JSON(os.path.join(ETDTGT,newpath,xml.split('/')[-1]))
+            metadata['metadata']=convertXML2JSON(os.path.join(destination,xml.split('/')[-1]))
             updateMetadata(bag,metadata)
             shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
