@@ -149,8 +149,9 @@ def runExtractRename(pattern):
         # Check xml and a pdf file exists
         if xml and len(glob.glob(td + '*.pdf'))>0:
             newpath = createRenameFolder(xml,td)
-            if not os.path.exists(os.path.join(ETDTGT,newpath)):
-                os.mkdir(os.path.join(ETDTGT,newpath))
+            if os.path.exists(os.path.join(ETDTGT,newpath)):
+                shutil.rmtree(os.path.join(ETDTGT,newpath))
+            os.mkdir(os.path.join(ETDTGT,newpath))
             created_dirs.append(os.path.join(ETDTGT,newpath))
             for etd in os.listdir(td):
                 # Move ETD files from temp to target directory
