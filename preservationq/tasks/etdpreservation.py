@@ -170,6 +170,8 @@ def runExtractRename(pattern):
             updateMetadata(bag,metadata)
             shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
+            # Log the transacton
+            log("ERROR:{0}".format(os.path.basename(f)))
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
         shutil.rmtree(td)
     return created_dirs
