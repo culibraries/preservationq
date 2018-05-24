@@ -145,12 +145,6 @@ def runExtractRename(pattern):
             else:
                 #Move folder to destination folder
                 shutil.move(td,destination)
-                #os.mkdir(destination)
-                #created_dirs.append(destination)
-                #for etd in os.listdir(td):
-                #    # Move ETD files from temp to target directory
-                #    shutil.move(td + etd, os.path.join(destination, etd))
-
                 #copy original zipfile into bag to preserve provenance
                 shutil.copy(f,destination)
                 # Log the transacton
