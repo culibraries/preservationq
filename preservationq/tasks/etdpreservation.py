@@ -118,18 +118,6 @@ def convertXML2JSON(xml):
     xmldict=xmltodict.parse(open(xml,'r').read())
     return json.loads(json.dumps(xmldict).replace('@','').replace('DISS_',''))
 
-
-# def catalogMetadata(bag,zipfile,processLocation,task_id):
-#     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
-#     catalogData=queryRecords(query)
-#     if catalogData['count']>0:
-#         cdata=catalogData['results'][0]
-#         cdata.update(createMetadata(bag,zipfile,processLocation,task_id))
-#         digitalcatalog(cdata)
-#     else:
-#         digitalcatalog(createMetadata(bag,zipfile,processLocation,task_id))
-
-
 @task()
 def runExtractRename(pattern):
     """
@@ -152,23 +140,25 @@ def runExtractRename(pattern):
             newpath = createRenameFolder(xml,td)
             destination = os.path.join(ETDTGT,'bags',newpath)
             if os.path.exists(destination):
-                shutil.rmtree(destination)
-            os.mkdir(destination)
-            created_dirs.append(destination)
-            for etd in os.listdir(td):
-                # Move ETD files from temp to target directory
-                shutil.move(td + etd, os.path.join(destination, etd))
-            #copy zipfile into bag to preserve provenance
-            shutil.copy(f,destination)
-            # Log the transacton
-            log(os.path.basename(f))
-            bag=newpath
-            processLocation=destination
-            zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
-            metadata=createMetadata(bag,zipfile,processLocation,task_id)
-            metadata['metadata']=convertXML2JSON(os.path.join(destination,xml.split('/')[-1]))
-            updateMetadata(bag,metadata)
-            shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
+                log("ERROR: File has already been processed. Check trouble folder for zipfile({0})".format(os.path.basename(f)))
+                shutil.move(f, os.path.join(ETDTGT,'trouble'))
+            else:
+                os.mkdir(destination)
+                created_dirs.append(destination)
+                for etd in os.listdir(td):
+                    # Move ETD files from temp to target directory
+                    shutil.move(td + etd, os.path.join(destination, etd))
+                #copy zipfile into bag to preserve provenance
+                shutil.copy(f,destination)
+                # Log the transacton
+                log(os.path.basename(f))
+                bag=newpath
+                processLocation=destination
+                zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
+                metadata=createMetadata(bag,zipfile,processLocation,task_id)
+                metadata['metadata']=convertXML2JSON(os.path.join(destination,xml.split('/')[-1]))
+                updateMetadata(bag,metadata)
+                shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
             # Log the transacton
             log("ERROR:{0}".format(os.path.basename(f)))
