@@ -21,7 +21,7 @@ def updateBagValidatationMetadata(bag,location,validationMetadata):
         cdata['locations'][location]['validation'].append(validationMetadata)
         digitalcatalog(cdata)
     else:
-        digitalcatalog({'bag':bag,'locations':{'validation':[validationMetadata]})
+        digitalcatalog({'bag':bag,'locations':{'local':{ 'validation':[validationMetadata]}}})
 
 def updateBagLocationMetadata(bag,locationMetadata):
     query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
