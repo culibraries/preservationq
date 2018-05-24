@@ -145,6 +145,8 @@ def runExtractRename(pattern):
             else:
                 #Move folder to destination folder
                 shutil.move(td,destination)
+                #add destination to list to pass to bag section of workflow
+                created_dirs.append(destination)
                 #copy original zipfile into bag to preserve provenance
                 shutil.copy(f,destination)
                 # Log the transacton
