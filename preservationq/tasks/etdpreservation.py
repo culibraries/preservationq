@@ -160,7 +160,7 @@ def runExtractRename(pattern):
             # Log the transacton
             log("ERROR:{0}".format(os.path.basename(f)))
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
-        shutil.rmtree(td)
+        #shutil.rmtree(td)
     return created_dirs
 
 if __name__ == '__main__':
