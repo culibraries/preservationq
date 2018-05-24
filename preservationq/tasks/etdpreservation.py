@@ -125,6 +125,7 @@ def runExtractRename(pattern):
     """
     task_id = str(runExtractRename.request.id)
     #check if directories present
+    checkExists(os.path.join(ETDTGT))
     checkExists(os.path.join(ETDTGT,'processed'))
     checkExists(os.path.join(ETDTGT,'trouble'))
     checkExists(os.path.join(ETDTGT,'bags'))
