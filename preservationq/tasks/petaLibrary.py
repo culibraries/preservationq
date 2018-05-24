@@ -65,10 +65,9 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
             raise Exception('Environmental Variable: petaLibraryUser is required')
 
         scp_dest = "{0}@{1}:{2}".format(user,petaLibraryNode,os.path.join(petaLibraryArchivePath,destination))
-        check_call(['rsync',"-e","ssh -i id_rsa_dt",'-rltD','--delete',source,scp_dest])
-        # check_call(["scp","-o","StrictHostKeyChecking=no","-o",
-        #             "UserKnownHostsFile=/dev/null", "-i","id_rsa_dt",
-        #             "-r",source,scp_dest])
+        check_call(["scp","-o","StrictHostKeyChecking=no","-o",
+                    "UserKnownHostsFile=/dev/null", "-i","id_rsa_dt",
+                    "-r",source,scp_dest])
     except Exception as inst:
         self.update_state(
             state = states.FAILURE,
