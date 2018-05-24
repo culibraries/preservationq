@@ -143,12 +143,15 @@ def runExtractRename(pattern):
                 log("ERROR: File has already been processed. Check trouble folder for zipfile({0})".format(os.path.basename(f)))
                 shutil.move(f, os.path.join(ETDTGT,'trouble'))
             else:
-                os.mkdir(destination)
-                created_dirs.append(destination)
-                for etd in os.listdir(td):
-                    # Move ETD files from temp to target directory
-                    shutil.move(td + etd, os.path.join(destination, etd))
-                #copy zipfile into bag to preserve provenance
+                #Move folder to destination folder
+                shutil.move(td,destination)
+                #os.mkdir(destination)
+                #created_dirs.append(destination)
+                #for etd in os.listdir(td):
+                #    # Move ETD files from temp to target directory
+                #    shutil.move(td + etd, os.path.join(destination, etd))
+
+                #copy original zipfile into bag to preserve provenance
                 shutil.copy(f,destination)
                 # Log the transacton
                 log(os.path.basename(f))
