@@ -116,7 +116,7 @@ def createMetadata(bag,zipfile,processLocation,task_id):
             }
 def convertXML2JSON(xml):
     xmldict=xmltodict.parse(open(xml,'r').read())
-    return json.loads(json.dumps(xmldict).replace('@',''))
+    return json.loads(json.dumps(xmldict).replace('@','').replace('DISS_',''))
 
 
 # def catalogMetadata(bag,zipfile,processLocation,task_id):
@@ -163,7 +163,7 @@ def runExtractRename(pattern):
             processLocation=os.path.join(ETDTGT,newpath)
             zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
             metadata=createMetadata(bag,zipfile,processLocation,task_id)
-            metadata['xml-metadata']=convertXML2JSON(os.path.join(ETDTGT,newpath,xml.split('/')[-1]))
+            metadata['metadata']=convertXML2JSON(os.path.join(ETDTGT,newpath,xml.split('/')[-1]))
             updateMetadata(bag,metadata)
             shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
