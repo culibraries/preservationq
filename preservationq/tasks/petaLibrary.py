@@ -22,6 +22,19 @@ def updateBagValidatationMetadata(bag,validationMetadata):
         digitalcatalog(cdata)
     else:
         digitalcatalog({'bag':bag,'validation':[validationMetadata]})
+
+def updateBagLocationMetadata(bag,locationMetadata):
+    query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
+    catalogData=queryRecords(query)
+    if catalogData['count']>0:
+        cdata=catalogData['results'][0]
+        print(cdata)
+        cdata['locations']['petalibrary']=locationMetadata
+        print(cdata)
+        digitalcatalog(cdata)
+    else:
+        digitalcatalog({'bag':bag,'locations':{'petalibrary':locationMetadata}})
+
 @task()
 def archiveBag(bags,queue):
     """
@@ -45,7 +58,6 @@ def archiveBag(bags,queue):
     res = group(grouptasks)()
     return {"subtasks":len(grouptasks),"valid":valid,"notvalid":notValid}
 
-
 @task(bind=True)
 def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
     try:
@@ -67,5 +79,5 @@ def scpPetaLibrary(self,source,destination,user=petaLibraryUser):
 
     metadata = {"bag":"{0}".format(destination.split('/')[-1]) ,
                 'locations':{'petalibrary':{'path':"{0}".format(os.path.join(petaLibraryArchivePath,destination))}}}
-    updateMetadata(metadata["bag"],metadata)
+    updateBagLocationMetadata(metadata["bag"],metadata['locations']['petalibrary'])
     return metadata
