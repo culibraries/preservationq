@@ -10,6 +10,7 @@ setup(name='preservationq',
           'requests==2.9.1',
           'paramiko==1.16.0',
           'xmltodict==0.11.0',
+          'argparse==1.1',
           'bagit',
       ],
 )
