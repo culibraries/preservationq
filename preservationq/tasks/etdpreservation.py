@@ -129,6 +129,8 @@ def runExtractRename(pattern):
     checkExists(os.path.join(ETDTGT,'processed'))
     checkExists(os.path.join(ETDTGT,'trouble'))
     checkExists(os.path.join(ETDTGT,'bags'))
+    if not os.getenv('APITOKEN',None):
+        raise Exception('Environmental APITOKEN')
     created_dirs=[]
     files = glob.glob(os.path.join(ETDSRC,pattern))
     for f in files:
