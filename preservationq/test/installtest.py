@@ -38,7 +38,7 @@ class testInstallRequirements(unittest.TestCase):
                 data=req.json()
                 self.assertEqual(self.api_token,data["auth-token"])
             except:
-                pass
+                raise
         except:
             self.assertEqual(self.api_token,req.text)
 
