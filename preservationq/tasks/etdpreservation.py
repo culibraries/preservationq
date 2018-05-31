@@ -84,7 +84,8 @@ def extractZipCheckXML(f,td):
         z.extractall(td)
         xml = glob.glob(td + '*.xml')[0]
         return xml
-    except:
+    except Exception as inst:
+        log("ERROR: {0} - {1}".format(os.path.basename(f),str(inst)))
         return False
 def createRenameFolder(xml,td):
     """
@@ -165,6 +166,7 @@ def runExtractRename(pattern):
                     metadata['metadata']=str(inst)
                 updateMetadata(bag,metadata)
                 shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
+            log("----------------------------------------------------------------------------------------------------")
         else:
             # Log the transacton
             log("ERROR:{0}".format(os.path.basename(f)))
