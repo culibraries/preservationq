@@ -115,7 +115,8 @@ def createMetadata(bag,zipfile,processLocation,task_id):
              'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
             }
 def convertXML2JSON(xml):
-    xmldict=xmltodict.parse(open(xml,'r').read())
+    f1= open(xml,'r',encoding='utf-8', errors='ignore').read()
+    xmldict=xmltodict.parse(f1.encode('utf-8'))
     return json.loads(json.dumps(xmldict).replace('@','').replace('DISS_',''))
 
 @task()
@@ -158,7 +159,10 @@ def runExtractRename(pattern):
                 processLocation=destination
                 zipfile=os.path.join(ETDTGT,'processed',f.split('/')[-1])
                 metadata=createMetadata(bag,zipfile,processLocation,task_id)
-                metadata['metadata']=convertXML2JSON(os.path.join(destination,xml.split('/')[-1]))
+                try:
+                    metadata['metadata']=convertXML2JSON(os.path.join(destination,xml.split('/')[-1]))
+                except Exception as inst:
+                    metadata['metadata']=str(inst)
                 updateMetadata(bag,metadata)
                 shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
         else:
