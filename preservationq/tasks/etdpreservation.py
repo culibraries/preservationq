@@ -115,8 +115,8 @@ def createMetadata(bag,zipfile,processLocation,task_id):
              'result':"{0}/queue/task/{1}/".format(base_url,task_id)}}
             }
 def convertXML2JSON(xml):
-    f1= open(xml,'r',encoding='utf-8', errors='ignore').read()
-    xmldict=xmltodict.parse(f1.encode('utf-8'))
+    f1= open(xml,'r').read()
+    xmldict=xmltodict.parse(f1.encode('utf-8','ignore'))
     return json.loads(json.dumps(xmldict).replace('@','').replace('DISS_',''))
 
 @task()
