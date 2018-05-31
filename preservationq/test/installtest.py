@@ -34,13 +34,10 @@ class testInstallRequirements(unittest.TestCase):
         headers={'Content-Type':'application/json','Authorization':'Token {0}'.format(self.api_token)}
         req = requests.get(user_url,headers=headers)
         try:
-            try:
-                data=req.json()
-                self.assertEqual(self.api_token,data["auth-token"])
-            except:
-                raise
+            data=req.json()
+            self.assertEqual(self.api_token,data["auth-token"])
         except:
-            self.assertEqual(self.api_token,req.text)
+            self.assertEqual('AuthToken','Please check if valid token')
 
 if __name__ == '__main__':
     unittest.main()
