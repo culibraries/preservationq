@@ -131,6 +131,7 @@ def runExtractRename(pattern):
     checkExists(os.path.join(ETDTGT,'processed'))
     checkExists(os.path.join(ETDTGT,'trouble'))
     checkExists(os.path.join(ETDTGT,'bags'))
+    checkExists(os.path.join(ETDTGT,'tmp'))
     if not os.getenv('APITOKEN',None):
         raise Exception('Environmental APITOKEN')
     created_dirs=[]
@@ -138,7 +139,7 @@ def runExtractRename(pattern):
     for f in files:
         # Create a temp directory to work in
         #td = tempfile.mkdtemp() + '\\' # Windows only
-        td = tempfile.mkdtemp() + '/'
+        td = "{0}/".format(tempfile.mkdtemp(dir=os.path.join(ETDTGT,'tmp')))
         xml = extractZipCheckXML(f,td)
         # Check xml and a pdf file exists
         if xml and len(glob.glob(td + '*.pdf'))>0:
@@ -166,11 +167,11 @@ def runExtractRename(pattern):
                     metadata['metadata']=str(inst)
                 updateMetadata(bag,metadata)
                 shutil.move(f, os.path.join(ETDTGT,'processed',f.split('/')[-1]))
-            log("----------------------------------------------------------------------------------------------------")
         else:
             # Log the transacton
             log("ERROR:{0}".format(os.path.basename(f)))
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
+        log("----------------------------------------------------------------------------------------------------")
         #shutil.rmtree(td)
     return created_dirs
 
