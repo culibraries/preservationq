@@ -22,7 +22,7 @@ import tempfile
 import shutil
 import datetime
 import string
-from digitalcatalog import updateMetadata from digitalcatalog, queryRecords
+from digitalcatalog import updateMetadata, queryRecords
 # Constants for Windows dev only
 #ETDSRC = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\source\\'
 #ETDTGT = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\target\\'
