@@ -22,7 +22,7 @@ import tempfile
 import shutil
 import datetime
 import string
-from digitalcatalog import updateMetadata
+from digitalcatalog import updateMetadata from digitalcatalog, queryRecords
 # Constants for Windows dev only
 #ETDSRC = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\source\\'
 #ETDTGT = 'C:\\Users\\frsc8564\\My Code\\ETD-Utils\\target\\'
@@ -103,6 +103,12 @@ def checkExists(path):
     """
     if not os.path.exists(path):
         os.mkdir(path)
+def checkBagExists(bag):
+    query='{{"filter":{{"bag":"{0}"}}}}'.format(bag)
+    catalogData=queryRecords(query)
+    if catalogData['count']>0:
+        return True
+    return False
 
 def createMetadata(bag,zipfile,processLocation,task_id):
     return {'bag':bag,
@@ -145,9 +151,10 @@ def runExtractRename(pattern):
         if xml and len(glob.glob(td + '*.pdf'))>0:
             newpath = createRenameFolder(xml,td)
             destination = os.path.join(ETDTGT,'bags',newpath)
-            if os.path.exists(destination):
-                log("ERROR: File has already been processed. Check trouble folder for zipfile({0})".format(os.path.basename(f)))
+            if checkBagExists(newpath) or os.path.exists(destination):
+                log("ERROR: Similar File has already been processed. Check trouble folder for zipfile({0})".format(os.path.basename(f)))
                 shutil.move(f, os.path.join(ETDTGT,'trouble'))
+                shutil.rmtree(td)
             else:
                 #Move folder to destination folder
                 shutil.move(td,destination)
@@ -171,8 +178,8 @@ def runExtractRename(pattern):
             # Log the transacton
             log("ERROR:{0}".format(os.path.basename(f)))
             shutil.move(f, os.path.join(ETDTGT,'trouble'))
+            shutil.rmtree(td)
         log("----------------------------------------------------------------------------------------------------")
-        #shutil.rmtree(td)
     return created_dirs
 
 if __name__ == '__main__':
